@@ -36,8 +36,6 @@ impl Config {
             .context(format!("could not write `{}`", backup_path.to_string_lossy()))?;
         fs::remove_file(&self.target)?;
 
-        // fs::rename(&self.target, &backup_path).context(format!("could not rename `{}` to `{}`", self.target.to_string_lossy(), backup_path.to_string_lossy()))?;
-
         Ok(())
     }
 
