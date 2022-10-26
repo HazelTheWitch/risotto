@@ -16,7 +16,16 @@ fn main() -> anyhow::Result<()> {
             let risotto = Risotto::load(PathBuf::from("./risotto.toml"))?;
 
             risotto.apply()?;
-        }
+        },
+        RisottoCommand::Add { target, local, symbolic } => {
+            let path = PathBuf::from("./risotto.toml");
+            
+            let mut risotto = if path.exists() { Risotto::load(path.clone())? } else { Risotto::init() };
+
+            risotto.add(target, local, symbolic)?;
+
+            risotto.dump(path.clone())?;
+        },
     }
 
     Ok(())

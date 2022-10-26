@@ -75,4 +75,19 @@ impl Risotto {
 
         Ok(())
     }
+
+    pub fn add(&mut self, target: PathBuf, local: PathBuf, symbolic: bool) -> anyhow::Result<()> {
+        let config = Config { source: local, target, symbolic: Some(symbolic) };
+
+        match self.configs.as_mut() {
+            Some(configs) => {
+                configs.push(config);
+            },
+            None => {
+                self.configs = Some(vec![config]);
+            }
+        }
+
+        Ok(())
+    }
 }

@@ -24,6 +24,14 @@ To apply a risotto.toml file use:
 risotto apply
 ```
 
+To add a config file to an existing risotto.toml (for example ~/.config/example.conf) use:
+
+```bash
+risotto add -t "~/.config/example.conf" -l ./example.conf
+```
+
+Note the usage of quotes to keep the target path from expading to `/home/{user}/.config/example.conf`. This keeps your `risotto.toml` file user agnostic.
+
 ## Config File Format
 
 ### **`risotto.toml`**

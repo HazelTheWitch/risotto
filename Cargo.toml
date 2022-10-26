@@ -1,6 +1,6 @@
 [package]
 name = "risotto"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Hazel Rella <hazelrella11@gmail.com>"]
 edition = "2021"
 
