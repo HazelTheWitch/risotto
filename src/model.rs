@@ -1,12 +1,15 @@
-use std::{path::{PathBuf, Path}, fs};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
 
 use anyhow::Context;
-use serde::{Serialize, Deserialize};
-use symlink::{symlink_auto, remove_symlink_auto};
+use serde::{Deserialize, Serialize};
+use symlink::{remove_symlink_auto, symlink_auto};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Risotto {
-    #[serde(rename="config")]
+    #[serde(rename = "config")]
     pub configs: Option<Vec<Config>>,
 }
 
@@ -38,9 +41,13 @@ impl Config {
 
         if self.symbolic.unwrap_or(true) {
             symlink_auto(
-                &self.source.canonicalize().context("could not canonicalize source")?,
-                &self.target
-            ).context("could not symlink")?;
+                &self
+                    .source
+                    .canonicalize()
+                    .context("could not canonicalize source")?,
+                &self.target,
+            )
+            .context("could not symlink")?;
         } else {
             fs::copy(&self.source, &self.target)?;
         }
@@ -70,19 +77,27 @@ impl Risotto {
         for config in self.configs.as_ref().unwrap_or(&vec![]) {
             config.link()?;
 
-            println!("{} -> {}", config.source.to_string_lossy(), config.target.to_string_lossy());
+            println!(
+                "{} -> {}",
+                config.source.to_string_lossy(),
+                config.target.to_string_lossy()
+            );
         }
 
         Ok(())
     }
 
     pub fn add(&mut self, target: PathBuf, local: PathBuf, symbolic: bool) -> anyhow::Result<()> {
-        let config = Config { source: local, target, symbolic: Some(symbolic) };
+        let config = Config {
+            source: local,
+            target,
+            symbolic: Some(symbolic),
+        };
 
         match self.configs.as_mut() {
             Some(configs) => {
                 configs.push(config);
-            },
+            }
             None => {
                 self.configs = Some(vec![config]);
             }
