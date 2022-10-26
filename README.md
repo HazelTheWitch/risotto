@@ -18,7 +18,7 @@ To initialize an empty risotto.toml file in your current directory use\:
 risotto init
 ```
 
-To apply a risotto.toml file use (by default backups will be made of any config files):
+To apply a risotto.toml file use:
 
 ```bash
 risotto apply

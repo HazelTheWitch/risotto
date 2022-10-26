@@ -1,6 +1,6 @@
 [package]
 name = "risotto"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Hazel Rella <hazelrella11@gmail.com>"]
 edition = "2021"
 
@@ -8,4 +8,5 @@ edition = "2021"
 anyhow = "1.0.66"
 clap = { version = "4", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }
-toml = "0.5"
+symlink = "0.1.0"
+toml = { version = "0.5", features = ["preserve_order"] }

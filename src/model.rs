@@ -1,7 +1,8 @@
-use std::{path::PathBuf, fs, os::unix::fs::symlink, ffi::OsString};
+use std::{path::{PathBuf, Path}, fs};
 
 use anyhow::Context;
 use serde::{Serialize, Deserialize};
+use symlink::{symlink_auto, remove_symlink_auto};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Risotto {
@@ -16,32 +17,27 @@ pub struct Config {
     pub symbolic: Option<bool>,
 }
 
+fn is_symlink<P: AsRef<Path>>(path: P) -> anyhow::Result<bool> {
+    let metadata = fs::symlink_metadata(path)?;
+    Ok(metadata.file_type().is_symlink())
+}
+
 impl Config {
-    pub fn backup(&self) -> anyhow::Result<()> {
-        let extension = {
-            match self.target.extension() {
-                Some(extension) => {
-                    let mut extension = extension.to_os_string();
-                    extension.push(".bak");
-                    extension
-                },
-                None => OsString::from("bak"),
-            }
-        };
-
-        let backup_path = self.target.with_extension(extension);
-
-        fs::write(&backup_path, fs::read(&self.target)
-                .context(format!("could not read `{}`", self.target.to_string_lossy()))?)
-            .context(format!("could not write `{}`", backup_path.to_string_lossy()))?;
-        fs::remove_file(&self.target)?;
-
-        Ok(())
-    }
-
     pub fn link(&self) -> anyhow::Result<()> {
+        if self.target.exists() {
+            if is_symlink(&self.target).context("could not check if target is a symlink")? {
+                remove_symlink_auto(&self.target)?;
+            } else {
+                if self.target.is_file() {
+                    fs::remove_file(&self.target)?;
+                } else {
+                    fs::remove_dir_all(&self.target)?;
+                }
+            }
+        }
+
         if self.symbolic.unwrap_or(true) {
-            symlink(
+            symlink_auto(
                 &self.source.canonicalize().context("could not canonicalize source")?,
                 &self.target
             ).context("could not symlink")?;
@@ -70,12 +66,8 @@ impl Risotto {
         Ok(())
     }
 
-    pub fn apply(&self, backup: bool) -> anyhow::Result<()> {
+    pub fn apply(&self) -> anyhow::Result<()> {
         for config in self.configs.as_ref().unwrap_or(&vec![]) {
-            if backup {
-                config.backup()?;
-            }
-
             config.link()?;
 
             println!("{} -> {}", config.source.to_string_lossy(), config.target.to_string_lossy());

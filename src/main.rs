@@ -12,10 +12,10 @@ fn main() -> anyhow::Result<()> {
 
             risotto.dump(path)?;
         },
-        RisottoCommand::Apply { no_backup } => {
+        RisottoCommand::Apply => {
             let risotto = Risotto::load(PathBuf::from("./risotto.toml"))?;
 
-            risotto.apply(!no_backup)?;
+            risotto.apply()?;
         }
     }
 

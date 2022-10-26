@@ -23,9 +23,5 @@ pub enum RisottoCommand {
         path: PathBuf,
     },
     /// Apply the risotto.toml file at the current working directory.
-    Apply {
-        /// Do not back up previous config files before applying the new ones
-        #[arg(long)]
-        no_backup: bool,
-    },
+    Apply,
 }
