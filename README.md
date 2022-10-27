@@ -12,7 +12,7 @@ cargo install --path .
 
 ## Usage
 
-To initialize an empty risotto.toml file in your current directory use\:
+To initialize an empty risotto.toml file in your current directory use:
 
 ```bash
 risotto init
