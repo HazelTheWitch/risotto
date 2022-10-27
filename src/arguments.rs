@@ -23,7 +23,11 @@ pub enum RisottoCommand {
         path: PathBuf,
     },
     /// Apply the risotto.toml file at the current working directory.
-    Apply,
+    Apply {
+        /// The path of the risotto.toml file.
+        #[arg(short, long, default_value = "./risotto.toml")]
+        path: PathBuf,
+    },
     /// Add a config file to the current risotto.toml file.
     Add {
         /// The "remote" config file to add.

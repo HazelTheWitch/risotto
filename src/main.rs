@@ -1,5 +1,6 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, env};
 
+use anyhow::{anyhow, Context};
 use clap::Parser;
 use risotto::{
     arguments::{Arguments, RisottoCommand},
@@ -15,8 +16,10 @@ fn main() -> anyhow::Result<()> {
 
             risotto.dump(path)?;
         }
-        RisottoCommand::Apply => {
-            let risotto = Risotto::load(PathBuf::from("./risotto.toml"))?;
+        RisottoCommand::Apply { path } => {
+            let risotto = Risotto::load(&path)?;
+
+            env::set_current_dir(&path.parent().ok_or(anyhow!("could not get the parent of the risotto.toml file"))?).context("could not set the current working directory")?;
 
             risotto.apply()?;
         }
@@ -27,14 +30,14 @@ fn main() -> anyhow::Result<()> {
             let path = PathBuf::from("./risotto.toml");
 
             let mut risotto = if path.exists() {
-                Risotto::load(path.clone())?
+                Risotto::load(&path)?
             } else {
                 Risotto::init()
             };
 
             risotto.add(target, local)?;
 
-            risotto.dump(path.clone())?;
+            risotto.dump(&path)?;
         }
     }
 

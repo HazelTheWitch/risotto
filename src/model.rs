@@ -56,14 +56,14 @@ impl Risotto {
         Self { configs: None }
     }
 
-    pub fn load(path: PathBuf) -> anyhow::Result<Self> {
-        let data = fs::read(&path).with_context(|| format!("could not read `{:?}`", path))?;
+    pub fn load<P: AsRef<Path>>(path: P) -> anyhow::Result<Self> {
+        let data = fs::read(&path).context(format!("could not read `{}`", path.as_ref().to_string_lossy()))?;
         Ok(toml::from_slice(&data).context("invalid risotto.toml file")?)
     }
 
-    pub fn dump(&self, path: PathBuf) -> anyhow::Result<()> {
-        let data = toml::to_string_pretty(self).context("could not serialize risotto.toml")?;
-        fs::write(path, data).context("could not write to risotto.toml")?;
+    pub fn dump<P: AsRef<Path>>(&self, path: P) -> anyhow::Result<()> {
+        let data = toml::to_string_pretty(self).context("could not serialize risotto")?;
+        fs::write(&path, data).context(format!("could not write to `{}`", path.as_ref().to_string_lossy()))?;
 
         Ok(())
     }
