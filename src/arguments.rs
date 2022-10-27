@@ -26,16 +26,12 @@ pub enum RisottoCommand {
     Apply,
     /// Add a config file to the current risotto.toml file.
     Add {
-        /// The config file to add.
+        /// The "remote" config file to add.
         #[arg(short, long)]
         target: PathBuf,
 
         /// The local version of the config file to create.
         #[arg(short, long)]
         local: PathBuf,
-
-        /// Whether or not to symbolically link the files
-        #[arg(short, long, default_value = "true")]
-        symbolic: bool,
     },
 }

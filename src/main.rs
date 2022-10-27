@@ -23,7 +23,6 @@ fn main() -> anyhow::Result<()> {
         RisottoCommand::Add {
             target,
             local,
-            symbolic,
         } => {
             let path = PathBuf::from("./risotto.toml");
 
@@ -33,7 +32,7 @@ fn main() -> anyhow::Result<()> {
                 Risotto::init()
             };
 
-            risotto.add(target, local, symbolic)?;
+            risotto.add(target, local)?;
 
             risotto.dump(path.clone())?;
         }

@@ -17,7 +17,6 @@ pub struct Risotto {
 pub struct Config {
     pub source: PathBuf,
     pub target: PathBuf,
-    pub symbolic: Option<bool>,
 }
 
 fn is_symlink<P: AsRef<Path>>(path: P) -> anyhow::Result<bool> {
@@ -39,18 +38,14 @@ impl Config {
             }
         }
 
-        if self.symbolic.unwrap_or(true) {
-            symlink_auto(
-                &self
-                    .source
-                    .canonicalize()
-                    .context("could not canonicalize source")?,
-                &self.target,
-            )
-            .context("could not symlink")?;
-        } else {
-            fs::copy(&self.source, &self.target)?;
-        }
+        symlink_auto(
+            &self
+                .source
+                .canonicalize()
+                .context("could not canonicalize source")?,
+            &self.target,
+        )
+        .context("could not symlink")?;
 
         Ok(())
     }
@@ -87,11 +82,10 @@ impl Risotto {
         Ok(())
     }
 
-    pub fn add(&mut self, target: PathBuf, local: PathBuf, symbolic: bool) -> anyhow::Result<()> {
+    pub fn add(&mut self, target: PathBuf, local: PathBuf) -> anyhow::Result<()> {
         let config = Config {
             source: local,
             target,
-            symbolic: Some(symbolic),
         };
 
         match self.configs.as_mut() {
