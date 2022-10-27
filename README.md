@@ -40,5 +40,4 @@ Note the usage of quotes to keep the target path from expading to `/home/{user}/
 [[config]]
 source = "./path/to/source/file"
 target = "~/path/to/config/file"
-link = true  # if true or omitted risotto will symlink the files
 ```
